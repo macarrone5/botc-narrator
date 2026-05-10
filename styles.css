@@ -660,6 +660,110 @@ textarea {
     border-radius: 3px;
 }
 
+/* Role Card Fullscreen */
+#role-card-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #0a0014;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#role-card-fullscreen.hidden {
+    display: none !important;
+}
+
+.role-card-inner {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.role-card-team {
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.role-card-team.townsfolk {
+    background: var(--good);
+    color: white;
+}
+
+.role-card-team.outsider {
+    background: #2980b9;
+    color: white;
+}
+
+.role-card-team.minion {
+    background: var(--warning);
+    color: black;
+}
+
+.role-card-team.demon {
+    background: var(--evil);
+    color: white;
+}
+
+.role-card-icon {
+    font-size: 5rem;
+    margin: 20px 0;
+}
+
+.role-card-name {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+}
+
+.role-card-ability {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+}
+
+.role-card-reminder {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+.role-card-close {
+    padding: 14px 40px;
+    font-size: 1rem;
+}
+
+/* Show Role Button in Grimoire */
+.show-role-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
 /* Responsive */
 @media (max-width: 380px) {
     .nav-btn {

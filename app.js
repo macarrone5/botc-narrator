@@ -200,10 +200,12 @@ function renderRolesAssignment() {
         div.innerHTML = `
             <span class="ra-player">${p.name} ${!p.alive ? '💀' : ''}</span>
             <span class="ra-role">
+                <button class="show-role-btn" data-player-id="${p.id}">📱 Mostrar</button>
                 <span class="role-badge ${type}">${type.substring(0, 3)}</span>
                 ${p.role.name}
             </span>
         `;
+        div.querySelector('.show-role-btn').addEventListener('click', () => showRoleCard(p));
         list.appendChild(div);
     });
 }
@@ -220,7 +222,12 @@ function renderGrimoire() {
         token.innerHTML = `
             <div class="token-name">${p.name}</div>
             <div class="token-role">${p.role.name}</div>
+            <button class="show-role-btn" data-player-id="${p.id}">Mostrar Rol</button>
         `;
+        token.querySelector('.show-role-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            showRoleCard(p);
+        });
         token.addEventListener('click', () => showPlayerModal(p));
         grid.appendChild(token);
     });
@@ -1036,6 +1043,47 @@ $('#reassign-roles-btn').addEventListener('click', () => {
             renderGameActive();
             saveGameState();
         }
+    }
+});
+
+// ============ ROLE CARD FULLSCREEN ============
+function showRoleCard(player) {
+    const type = getRoleType(player.role);
+    const typeNames = {
+        townsfolk: 'Aldeano',
+        outsider: 'Forastero',
+        minion: 'Secuaz',
+        demon: 'Demonio'
+    };
+
+    const rcTeam = $('#rc-team');
+    rcTeam.textContent = typeNames[type] || type;
+    rcTeam.className = `role-card-team ${type}`;
+
+    $('#rc-icon').textContent = player.role.icon || '🎭';
+    $('#rc-name').textContent = player.role.name;
+    $('#rc-ability').textContent = player.role.abilityFull || player.role.ability;
+
+    // Reminder text based on type
+    const reminders = {
+        townsfolk: 'Eres BUENO. Tu objetivo es encontrar y ejecutar al Demonio.',
+        outsider: 'Eres BUENO, pero tu habilidad puede complicar las cosas para tu equipo.',
+        minion: 'Eres MALVADO. Conoces al Demonio y a los otros Secuaces. Protege al Demonio.',
+        demon: 'Eres MALVADO. Debes matar cada noche sin ser descubierto. Si mueres, el Bien gana.'
+    };
+    $('#rc-reminder').textContent = reminders[type] || '';
+
+    show($('#role-card-fullscreen'));
+}
+
+$('#rc-close').addEventListener('click', () => {
+    hide($('#role-card-fullscreen'));
+});
+
+// Also close with tap anywhere on the background
+$('#role-card-fullscreen').addEventListener('click', (e) => {
+    if (e.target === $('#role-card-fullscreen')) {
+        hide($('#role-card-fullscreen'));
     }
 });
 

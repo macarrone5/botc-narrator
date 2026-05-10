@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BotC Narrator Helper</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a0a2e">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div id="app">
+        <nav id="main-nav">
+            <button class="nav-btn active" data-tab="setup">Partida</button>
+            <button class="nav-btn" data-tab="night">Noche</button>
+            <button class="nav-btn" data-tab="day">Día</button>
+            <button class="nav-btn" data-tab="players">Jugadores</button>
+            <button class="nav-btn" data-tab="summary">Resumen</button>
+        </nav>
+
+        <!-- SETUP TAB -->
+        <section id="tab-setup" class="tab-content active">
+            <h1>Blood on the Clocktower</h1>
+            <h2>Asistente del Narrador</h2>
+
+            <div id="no-game-section">
+                <div class="card">
+                    <h3>Nueva Partida</h3>
+                    <label>Nombre de la partida:</label>
+                    <input type="text" id="game-name" placeholder="Ej: Partida del sábado">
+
+                    <label>Edición:</label>
+                    <select id="edition-select">
+                        <option value="trouble_brewing">Trouble Brewing</option>
+                        <option value="bad_moon_rising">Bad Moon Rising</option>
+                        <option value="sects_and_violets">Sects & Violets</option>
+                        <option value="custom">Personalizada</option>
+                    </select>
+
+                    <label>Número de jugadores:</label>
+                    <input type="number" id="player-count" min="5" max="25" value="10">
+
+                    <div id="player-names-section">
+                        <label>Nombres de jugadores:</label>
+                        <div id="player-names-list"></div>
+                        <button class="btn btn-secondary" id="add-player-btn">+ Añadir Jugador</button>
+                    </div>
+
+                    <button class="btn btn-primary" id="create-game-btn">Crear Partida</button>
+                </div>
+
+                <div class="card" id="load-game-card">
+                    <h3>Cargar Partida</h3>
+                    <select id="saved-games-select">
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                    <button class="btn btn-secondary" id="load-game-btn">Cargar</button>
+                    <button class="btn btn-danger" id="delete-game-btn">Eliminar</button>
+                </div>
+            </div>
+
+            <div id="game-active-section" class="hidden">
+                <div class="card">
+                    <h3 id="active-game-title"></h3>
+                    <p id="active-game-info"></p>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" id="reassign-roles-btn">Reasignar Roles</button>
+                        <button class="btn btn-secondary" id="save-game-btn">Guardar</button>
+                        <button class="btn btn-danger" id="end-game-btn">Finalizar Partida</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Roles Asignados</h3>
+                    <div id="roles-assignment-list"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Grimorio</h3>
+                    <div id="grimoire-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NIGHT TAB -->
+        <section id="tab-night" class="tab-content">
+            <div class="phase-header">
+                <h2>Fase de Noche <span id="night-number-display">1</span></h2>
+                <div class="btn-group">
+                    <button class="btn btn-small" id="prev-night-btn">← Anterior</button>
+                    <button class="btn btn-small btn-primary" id="next-night-btn">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Orden de Despertar</h3>
+                <p class="hint">Toca cada rol cuando lo hayas resuelto</p>
+                <div id="night-order-list"></div>
+            </div>
+
+            <div class="card">
+                <h3>Eventos de esta Noche</h3>
+                <div id="night-events-list"></div>
+                <div class="event-input">
+                    <select id="night-event-player">
+                        <option value="">Jugador...</option>
+                    </select>
+                    <input type="text" id="night-event-desc" placeholder="Descripción del evento">
+                    <button class="btn btn-small btn-primary" id="add-night-event-btn">+</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Muertes esta Noche</h3>
+                <div id="night-deaths-list"></div>
+                <div class="event-input">
+                    <select id="night-death-player">
+                        <option value="">Jugador...</option>
+                    </select>
+                    <input type="text" id="night-death-cause" placeholder="Causa de muerte">
+                    <button class="btn btn-small btn-danger" id="add-night-death-btn">☠</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DAY TAB -->
+        <section id="tab-day" class="tab-content">
+            <div class="phase-header">
+                <h2>Fase de Día <span id="day-number-display">1</span></h2>
+                <button class="btn btn-small btn-primary" id="advance-phase-btn">Pasar a Noche →</button>
+            </div>
+
+            <div class="card">
+                <h3>Temporizador de Discusión</h3>
+                <div class="timer-section">
+                    <span id="timer-display">05:00</span>
+                    <div class="btn-group">
+                        <button class="btn btn-small" id="timer-minus">-1m</button>
+                        <button class="btn btn-small btn-primary" id="timer-start">Iniciar</button>
+                        <button class="btn btn-small btn-danger" id="timer-reset">Reset</button>
+                        <button class="btn btn-small" id="timer-plus">+1m</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Nominaciones</h3>
+                <div id="nominations-list"></div>
+                <div class="nomination-input">
+                    <select id="nominator-select">
+                        <option value="">Nominador...</option>
+                    </select>
+                    <span>nomina a</span>
+                    <select id="nominated-select">
+                        <option value="">Nominado...</option>
+                    </select>
+                    <button class="btn btn-small btn-primary" id="add-nomination-btn">Nominar</button>
+                </div>
+            </div>
+
+            <div class="card" id="voting-card" class="hidden">
+                <h3>Votación Activa: <span id="voting-target"></span></h3>
+                <p class="hint">Votos necesarios: <span id="votes-needed"></span></p>
+                <div id="voting-players-list"></div>
+                <div class="vote-result">
+                    <span>Total: <strong id="vote-count">0</strong></span>
+                    <button class="btn btn-small btn-primary" id="resolve-vote-btn">Resolver</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Ejecución del Pueblo</h3>
+                <div id="execution-section">
+                    <select id="execute-player-select">
+                        <option value="">Nadie ejecutado</option>
+                    </select>
+                    <input type="text" id="execution-notes" placeholder="Notas (ej: usó su voto de muerto)">
+                    <button class="btn btn-danger" id="execute-btn">Ejecutar</button>
+                </div>
+                <div id="today-execution"></div>
+            </div>
+        </section>
+
+        <!-- PLAYERS TAB -->
+        <section id="tab-players" class="tab-content">
+            <h2>Estado de Jugadores</h2>
+            <div id="players-detail-list"></div>
+        </section>
+
+        <!-- SUMMARY TAB -->
+        <section id="tab-summary" class="tab-content">
+            <h2>Resumen de la Partida</h2>
+            <div class="card">
+                <h3>Resultado</h3>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="win-good-btn">Victoria del Bien</button>
+                    <button class="btn btn-danger" id="win-evil-btn">Victoria del Mal</button>
+                </div>
+                <p id="winner-display"></p>
+            </div>
+
+            <div class="card">
+                <h3>Cronología</h3>
+                <div id="timeline-list"></div>
+            </div>
+
+            <div class="card">
+                <h3>Estadísticas</h3>
+                <div id="stats-section"></div>
+            </div>
+
+            <div class="card">
+                <h3>Exportar</h3>
+                <button class="btn btn-secondary" id="export-text-btn">Copiar como Texto</button>
+                <button class="btn btn-secondary" id="export-json-btn">Descargar JSON</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-overlay" class="hidden">
+        <div id="modal-content">
+            <button class="modal-close" id="modal-close-btn">×</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="roles.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #1a0a2e;
+    --bg-secondary: #2d1b4e;
+    --bg-card: #3d2a5c;
+    --text-primary: #f0e6ff;
+    --text-secondary: #b8a0d4;
+    --accent: #9b59b6;
+    --accent-light: #c39bd3;
+    --good: #3498db;
+    --evil: #e74c3c;
+    --dead: #666;
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+/* Navigation */
+#main-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--accent);
+    z-index: 1000;
+    padding: 4px;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 10px 4px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.nav-btn.active {
+    color: var(--text-primary);
+    background: var(--accent);
+}
+
+/* Tabs */
+.tab-content {
+    display: none;
+    padding: 16px;
+    animation: fadeIn 0.3s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, var(--accent-light), var(--good));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--accent-light);
+}
+
+/* Cards */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-light);
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--accent);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Forms */
+label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    margin-top: 10px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-light);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Player name inputs */
+.player-name-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.player-name-input input {
+    flex: 1;
+}
+
+.player-name-input .remove-player {
+    background: var(--danger);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Night order */
+.night-order-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 4px solid var(--accent);
+}
+
+.night-order-item.done {
+    opacity: 0.5;
+    border-left-color: var(--success);
+    text-decoration: line-through;
+}
+
+.night-order-item .order-num {
+    font-weight: bold;
+    margin-right: 10px;
+    color: var(--accent-light);
+    min-width: 24px;
+}
+
+.night-order-item .role-name {
+    flex: 1;
+    font-weight: 600;
+}
+
+.night-order-item .player-name {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.night-order-item.first-night {
+    border-left-color: var(--warning);
+}
+
+/* Role badges */
+.role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.role-badge.townsfolk { background: var(--good); color: white; }
+.role-badge.outsider { background: #2980b9; color: white; }
+.role-badge.minion { background: var(--warning); color: black; }
+.role-badge.demon { background: var(--evil); color: white; }
+
+/* Player cards */
+.player-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--good);
+    transition: all 0.2s;
+}
+
+.player-card.evil {
+    border-left-color: var(--evil);
+}
+
+.player-card.dead {
+    opacity: 0.6;
+    border-left-color: var(--dead);
+}
+
+.player-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.player-card-name {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.player-card-role {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.player-statuses {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.status-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid;
+}
+
+.status-tag.active {
+    font-weight: bold;
+}
+
+.status-tag.poisoned { border-color: #27ae60; color: #27ae60; }
+.status-tag.poisoned.active { background: #27ae60; color: white; }
+.status-tag.drunk { border-color: #f39c12; color: #f39c12; }
+.status-tag.drunk.active { background: #f39c12; color: black; }
+.status-tag.protected { border-color: #3498db; color: #3498db; }
+.status-tag.protected.active { background: #3498db; color: white; }
+.status-tag.dead { border-color: #e74c3c; color: #e74c3c; }
+.status-tag.dead.active { background: #e74c3c; color: white; }
+.status-tag.no-ability { border-color: #95a5a6; color: #95a5a6; }
+.status-tag.no-ability.active { background: #95a5a6; color: white; }
+.status-tag.used-vote { border-color: #8e44ad; color: #8e44ad; }
+.status-tag.used-vote.active { background: #8e44ad; color: white; }
+
+/* Player notes */
+.player-notes {
+    margin-top: 8px;
+}
+
+.player-notes textarea {
+    font-size: 0.8rem;
+    min-height: 40px;
+    padding: 8px;
+}
+
+/* Nominations */
+.nomination-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.nomination-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.nomination-input select {
+    width: auto;
+    flex: 1;
+    min-width: 100px;
+}
+
+.nomination-input span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Voting */
+.vote-player-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.vote-player-item.voted {
+    background: var(--accent);
+}
+
+.vote-player-item.dead-voter {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.vote-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--accent);
+}
+
+/* Timer */
+.timer-section {
+    text-align: center;
+}
+
+#timer-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+#timer-display.warning {
+    color: var(--warning);
+}
+
+#timer-display.danger {
+    color: var(--danger);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Events */
+.event-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+.event-item .event-delete {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.event-input {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    align-items: center;
+}
+
+.event-input select {
+    width: auto;
+    min-width: 100px;
+}
+
+.event-input input {
+    flex: 1;
+}
+
+/* Death marker */
+.death-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.death-item .skull {
+    font-size: 1.2rem;
+}
+
+/* Grimoire */
+#grimoire-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+}
+
+.grimoire-token {
+    text-align: center;
+    padding: 8px 4px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.grimoire-token.good {
+    border-color: var(--good);
+}
+
+.grimoire-token.evil {
+    border-color: var(--evil);
+}
+
+.grimoire-token.dead {
+    opacity: 0.4;
+}
+
+.grimoire-token .token-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grimoire-token .token-role {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+}
+
+/* Timeline */
+.timeline-entry {
+    padding: 8px 12px;
+    border-left: 3px solid var(--accent);
+    margin-bottom: 8px;
+    margin-left: 8px;
+}
+
+.timeline-entry.night {
+    border-left-color: #2c3e50;
+}
+
+.timeline-entry.day {
+    border-left-color: var(--warning);
+}
+
+.timeline-entry .timeline-phase {
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.timeline-entry .timeline-text {
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+
+/* Roles assignment */
+.role-assignment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.role-assignment-item .ra-player {
+    font-weight: bold;
+}
+
+.role-assignment-item .ra-role {
+    font-size: 0.85rem;
+}
+
+/* Phase header */
+.phase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* Modal */
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+#modal-overlay.hidden {
+    display: none;
+}
+
+#modal-content {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Hint text */
+.hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* Stats */
+#stats-section .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--bg-secondary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 380px) {
+    .nav-btn {
+        font-size: 0.65rem;
+        padding: 8px 2px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}

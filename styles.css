@@ -516,6 +516,13 @@ textarea {
     opacity: 0.4;
 }
 
+.grimoire-token .token-seat {
+    font-size: 0.65rem;
+    font-weight: bold;
+    color: var(--accent-light);
+    margin-bottom: 2px;
+}
+
 .grimoire-token .token-name {
     font-size: 0.7rem;
     font-weight: bold;

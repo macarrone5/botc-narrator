@@ -34,8 +34,8 @@ function updatePlayerNameInputs() {
         const div = document.createElement('div');
         div.className = 'player-name-input';
         div.innerHTML = `
-            <span style="min-width:24px;font-size:0.8rem;color:var(--text-secondary)">${i + 1}.</span>
-            <input type="text" placeholder="Jugador ${i + 1}" value="${currentNames[i] || ''}">
+            <span style="min-width:32px;font-size:0.8rem;color:var(--accent-light);font-weight:bold">🪑${i + 1}</span>
+            <input type="text" placeholder="Jugador ${i + 1} (asiento ${i + 1})" value="${currentNames[i] || ''}">
             <button class="remove-player" data-idx="${i}">×</button>
         `;
         playerNamesList.appendChild(div);
@@ -83,6 +83,7 @@ function createGame() {
 
     const players = playerNames.map((name, i) => ({
         id: i,
+        seat: i + 1,
         name: name,
         role: shuffledRoles[i],
         alive: true,
@@ -198,11 +199,11 @@ function renderRolesAssignment() {
         const div = document.createElement('div');
         div.className = `role-assignment-item ${!p.alive ? 'dead' : ''}`;
         div.innerHTML = `
-            <span class="ra-player">${p.name} ${!p.alive ? '💀' : ''}</span>
+            <span class="ra-player"><span style="color:var(--accent-light)">🪑${p.seat}</span> ${p.name} ${!p.alive ? '💀' : ''}</span>
             <span class="ra-role">
-                <button class="show-role-btn" data-player-id="${p.id}">📱 Mostrar</button>
+                <button class="show-role-btn" data-player-id="${p.id}">📱</button>
                 <span class="role-badge ${type}">${type.substring(0, 3)}</span>
-                ${p.role.name}
+                ${p.role.icon || ''} ${p.role.name}
             </span>
         `;
         div.querySelector('.show-role-btn').addEventListener('click', () => showRoleCard(p));
@@ -220,9 +221,10 @@ function renderGrimoire() {
         const token = document.createElement('div');
         token.className = `grimoire-token ${isEvil ? 'evil' : 'good'} ${!p.alive ? 'dead' : ''}`;
         token.innerHTML = `
+            <div class="token-seat">${p.seat}</div>
             <div class="token-name">${p.name}</div>
             <div class="token-role">${p.role.name}</div>
-            <button class="show-role-btn" data-player-id="${p.id}">Mostrar Rol</button>
+            <button class="show-role-btn" data-player-id="${p.id}">Mostrar</button>
         `;
         token.querySelector('.show-role-btn').addEventListener('click', (e) => {
             e.stopPropagation();
@@ -231,6 +233,45 @@ function renderGrimoire() {
         token.addEventListener('click', () => showPlayerModal(p));
         grid.appendChild(token);
     });
+}
+
+// ============ SEATING & NEIGHBORS ============
+function getNeighbors(player) {
+    const players = gameState.players;
+    const idx = players.findIndex(p => p.id === player.id);
+    const total = players.length;
+    const leftIdx = (idx - 1 + total) % total;
+    const rightIdx = (idx + 1) % total;
+    return { left: players[leftIdx], right: players[rightIdx] };
+}
+
+function getAliveNeighbors(player) {
+    const players = gameState.players;
+    const idx = players.findIndex(p => p.id === player.id);
+    const total = players.length;
+
+    let leftAlive = null;
+    let rightAlive = null;
+
+    // Search left (counter-clockwise)
+    for (let i = 1; i < total; i++) {
+        const checkIdx = (idx - i + total) % total;
+        if (players[checkIdx].alive) {
+            leftAlive = players[checkIdx];
+            break;
+        }
+    }
+
+    // Search right (clockwise)
+    for (let i = 1; i < total; i++) {
+        const checkIdx = (idx + i) % total;
+        if (players[checkIdx].alive) {
+            rightAlive = players[checkIdx];
+            break;
+        }
+    }
+
+    return { left: leftAlive, right: rightAlive };
 }
 
 function getRoleType(role) {
@@ -746,15 +787,21 @@ function renderPlayersTab() {
     gameState.players.forEach(p => {
         const type = getRoleType(p.role);
         const isEvil = type === 'demon' || type === 'minion';
+        const neighbors = getNeighbors(p);
+        const aliveNeighbors = getAliveNeighbors(p);
         const card = document.createElement('div');
         card.className = `player-card ${isEvil ? 'evil' : ''} ${!p.alive ? 'dead' : ''}`;
         card.innerHTML = `
             <div class="player-card-header">
-                <span class="player-card-name">${p.name} ${!p.alive ? '💀' : ''}</span>
+                <span class="player-card-name"><span style="color:var(--accent-light)">🪑${p.seat}</span> ${p.name} ${!p.alive ? '💀' : ''}</span>
                 <span class="player-card-role">
                     <span class="role-badge ${type}">${type.substring(0, 3)}</span>
-                    ${p.role.name}
+                    ${p.role.icon || ''} ${p.role.name}
                 </span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:6px;">
+                ← ${neighbors.left.name} (🪑${neighbors.left.seat}) &nbsp;|&nbsp; ${neighbors.right.name} (🪑${neighbors.right.seat}) →
+                ${aliveNeighbors.left && aliveNeighbors.left.id !== neighbors.left.id ? `<br>Vecinos vivos: ← ${aliveNeighbors.left.name} | ${aliveNeighbors.right ? aliveNeighbors.right.name : '-'} →` : ''}
             </div>
             <div class="player-statuses">
                 <span class="status-tag poisoned ${p.statuses.includes('poisoned') ? 'active' : ''}" data-player="${p.id}" data-status="poisoned">Envenenado</span>
@@ -818,14 +865,22 @@ function renderPlayersTab() {
 // ============ PLAYER MODAL ============
 function showPlayerModal(player) {
     const type = getRoleType(player.role);
+    const neighbors = getNeighbors(player);
+    const aliveNeighbors = getAliveNeighbors(player);
     const modal = $('#modal-body');
     modal.innerHTML = `
-        <h3>${player.name}</h3>
-        <p><span class="role-badge ${type}">${type}</span> <strong>${player.role.name}</strong></p>
+        <h3>🪑${player.seat} - ${player.name}</h3>
+        <p><span class="role-badge ${type}">${type}</span> <strong>${player.role.icon || ''} ${player.role.name}</strong></p>
         <p style="margin-top:8px;font-size:0.85rem;color:var(--text-secondary)">${player.role.ability}</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg-secondary);border-radius:8px;">
+            <p style="font-size:0.8rem;color:var(--accent-light);font-weight:bold;margin-bottom:4px;">📍 Posición en el círculo:</p>
+            <p style="font-size:0.85rem;">← <strong>${neighbors.left.name}</strong> (🪑${neighbors.left.seat}) | <strong>${neighbors.right.name}</strong> (🪑${neighbors.right.seat}) →</p>
+            <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px;">Vecinos vivos: ← ${aliveNeighbors.left ? aliveNeighbors.left.name : 'ninguno'} | ${aliveNeighbors.right ? aliveNeighbors.right.name : 'ninguno'} →</p>
+        </div>
         <p style="margin-top:8px">Estado: ${player.alive ? '🟢 Vivo' : '💀 Muerto'}</p>
         ${player.statuses.length ? `<p>Estados: ${player.statuses.join(', ')}</p>` : ''}
         ${player.notes ? `<p style="margin-top:8px"><em>Notas: ${player.notes}</em></p>` : ''}
+        <button class="btn btn-primary" style="margin-top:12px;width:100%" onclick="showRoleCard(gameState.players[${player.id}]);hide($('#modal-overlay'));">📱 Mostrar Rol al Jugador</button>
     `;
     show($('#modal-overlay'));
 }

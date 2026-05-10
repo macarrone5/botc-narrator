@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>BotC - Guía de Roles</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #1a0a2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2a5c;
+            --text-primary: #f0e6ff;
+            --text-secondary: #b8a0d4;
+            --accent: #9b59b6;
+            --accent-light: #c39bd3;
+            --good: #3498db;
+            --evil: #e74c3c;
+            --radius: 12px;
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-top: calc(16px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--accent-light), var(--good));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--accent-light);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        /* Filters */
+        .filters {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .filter-btn.townsfolk.active { background: var(--good); border-color: var(--good); }
+        .filter-btn.outsider.active { background: #2980b9; border-color: #2980b9; }
+        .filter-btn.minion.active { background: #f39c12; border-color: #f39c12; color: black; }
+        .filter-btn.demon.active { background: var(--evil); border-color: var(--evil); }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-light);
+        }
+
+        /* Edition tabs */
+        .edition-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .edition-tab {
+            flex: 1;
+            padding: 8px 4px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .edition-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Role cards */
+        .role-section-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 12px 0 8px;
+            border-bottom: 1px solid var(--bg-card);
+            margin-bottom: 8px;
+        }
+
+        .role-section-title.townsfolk { color: var(--good); }
+        .role-section-title.outsider { color: #2980b9; }
+        .role-section-title.minion { color: #f39c12; }
+        .role-section-title.demon { color: var(--evil); }
+
+        .role-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--good);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-card:active {
+            transform: scale(0.98);
+        }
+
+        .role-card.outsider { border-left-color: #2980b9; }
+        .role-card.minion { border-left-color: #f39c12; }
+        .role-card.demon { border-left-color: var(--evil); }
+
+        .role-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .role-icon {
+            font-size: 1.8rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .role-info h3 {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .role-info .role-type-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        .role-type-badge.townsfolk { background: var(--good); color: white; }
+        .role-type-badge.outsider { background: #2980b9; color: white; }
+        .role-type-badge.minion { background: #f39c12; color: black; }
+        .role-type-badge.demon { background: var(--evil); color: white; }
+
+        .role-ability {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .role-detail {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--bg-secondary);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .role-card.expanded .role-detail {
+            display: block;
+        }
+
+        .role-card.expanded {
+            background: var(--bg-secondary);
+        }
+
+        .expand-hint {
+            font-size: 0.7rem;
+            color: var(--accent-light);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* Fullscreen role view */
+        .role-fullscreen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0014;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .role-fullscreen.visible {
+            display: flex;
+        }
+
+        .role-fullscreen .fs-team {
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 6px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .fs-team.townsfolk { background: var(--good); color: white; }
+        .fs-team.outsider { background: #2980b9; color: white; }
+        .fs-team.minion { background: #f39c12; color: black; }
+        .fs-team.demon { background: var(--evil); color: white; }
+
+        .role-fullscreen .fs-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .role-fullscreen .fs-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .role-fullscreen .fs-ability {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--accent);
+            max-width: 400px;
+        }
+
+        .role-fullscreen .fs-close {
+            margin-top: 24px;
+            padding: 12px 32px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Team summary */
+        .team-summary {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .team-summary h3 {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--accent-light);
+        }
+
+        .team-summary p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Count badge */
+        .count-badge {
+            font-size: 0.7rem;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Blood on the Clocktower</h1>
+            <p>Guía de Roles para Jugadores</p>
+            <a href="narrator.html" class="nav-link">🎭 Panel del Narrador</a>
+            <a href="index.html" class="nav-link">← Inicio</a>
+        </header>
+
+        <div class="team-summary">
+            <h3>¿Cómo funciona?</h3>
+            <p>
+                <strong style="color:var(--good)">Aldeanos</strong> tienen habilidades que ayudan al pueblo.
+                <strong style="color:#2980b9">Forasteros</strong> son buenos pero pueden complicar las cosas.
+                <strong style="color:#f39c12">Secuaces</strong> ayudan al Demonio.
+                <strong style="color:var(--evil)">Demonio</strong> mata cada noche.
+                El Bien gana ejecutando al Demonio. El Mal gana si quedan solo 2 vivos.
+            </p>
+        </div>
+
+        <div class="filters">
+            <div class="edition-tabs">
+                <button class="edition-tab active" data-edition="trouble_brewing">Trouble Brewing</button>
+                <button class="edition-tab" data-edition="bad_moon_rising">Bad Moon Rising</button>
+                <button class="edition-tab" data-edition="sects_and_violets">Sects & Violets</button>
+            </div>
+            <div class="filter-row">
+                <button class="filter-btn active" data-type="all">Todos</button>
+                <button class="filter-btn townsfolk" data-type="townsfolk">Aldeanos</button>
+                <button class="filter-btn outsider" data-type="outsider">Forasteros</button>
+                <button class="filter-btn minion" data-type="minion">Secuaces</button>
+                <button class="filter-btn demon" data-type="demon">Demonios</button>
+            </div>
+            <input type="text" class="search-input" id="search-roles" placeholder="🔍 Buscar rol por nombre...">
+        </div>
+
+        <div id="roles-list"></div>
+    </div>
+
+    <!-- Fullscreen role view -->
+    <div class="role-fullscreen" id="role-fullscreen">
+        <span class="fs-team" id="fs-team"></span>
+        <span class="fs-icon" id="fs-icon"></span>
+        <span class="fs-name" id="fs-name"></span>
+        <p class="fs-ability" id="fs-ability"></p>
+        <button class="fs-close" id="fs-close">Cerrar</button>
+    </div>
+
+    <script src="roles.js"></script>
+    <script>
+        // State
+        let currentEdition = 'trouble_brewing';
+        let currentType = 'all';
+        let searchQuery = '';
+
+        // Edition tabs
+        document.querySelectorAll('.edition-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.edition-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentEdition = tab.dataset.edition;
+                renderRoles();
+            });
+        });
+
+        // Type filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentType = btn.dataset.type;
+                renderRoles();
+            });
+        });
+
+        // Search
+        document.getElementById('search-roles').addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            renderRoles();
+        });
+
+        // Render
+        function renderRoles() {
+            const list = document.getElementById('roles-list');
+            list.innerHTML = '';
+
+            const edition = EDITIONS[currentEdition];
+            if (!edition) return;
+
+            const types = currentType === 'all'
+                ? ['townsfolk', 'outsider', 'minion', 'demon']
+                : [currentType];
+
+            const typeNames = {
+                townsfolk: 'Aldeanos',
+                outsider: 'Forasteros',
+                minion: 'Secuaces',
+                demon: 'Demonios'
+            };
+
+            let totalResults = 0;
+
+            types.forEach(type => {
+                const roles = edition.roles[type] || [];
+                const filtered = roles.filter(r => {
+                    if (!searchQuery) return true;
+                    return r.name.toLowerCase().includes(searchQuery) ||
+                           r.ability.toLowerCase().includes(searchQuery) ||
+                           r.id.toLowerCase().includes(searchQuery);
+                });
+
+                if (filtered.length === 0) return;
+                totalResults += filtered.length;
+
+                // Section title
+                const title = document.createElement('div');
+                title.className = `role-section-title ${type}`;
+                title.innerHTML = `${typeNames[type]} <span class="count-badge">${filtered.length}</span>`;
+                list.appendChild(title);
+
+                // Role cards
+                filtered.forEach(role => {
+                    const card = document.createElement('div');
+                    card.className = `role-card ${type}`;
+                    card.innerHTML = `
+                        <div class="role-card-header">
+                            <span class="role-icon">${role.icon || '🎭'}</span>
+                            <div class="role-info">
+                                <h3>${role.name}</h3>
+                                <span class="role-type-badge ${type}">${typeNames[type].slice(0, -1)}</span>
+                            </div>
+                        </div>
+                        <p class="role-ability">${role.ability}</p>
+                        <div class="role-detail">${role.abilityFull || role.ability}</div>
+                        <p class="expand-hint">Toca para más detalles</p>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        // Toggle expand
+                        const wasExpanded = card.classList.contains('expanded');
+                        document.querySelectorAll('.role-card.expanded').forEach(c => c.classList.remove('expanded'));
+                        if (!wasExpanded) card.classList.add('expanded');
+                    });
+
+                    // Long press for fullscreen
+                    let pressTimer;
+                    card.addEventListener('touchstart', (e) => {
+                        pressTimer = setTimeout(() => {
+                            showFullscreen(role, type);
+                        }, 500);
+                    });
+                    card.addEventListener('touchend', () => clearTimeout(pressTimer));
+                    card.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+                    list.appendChild(card);
+                });
+            });
+
+            if (totalResults === 0) {
+                list.innerHTML = '<div class="no-results"><p>No se encontraron roles</p></div>';
+            }
+        }
+
+        // Fullscreen view
+        function showFullscreen(role, type) {
+            const typeNames = { townsfolk: 'Aldeano', outsider: 'Forastero', minion: 'Secuaz', demon: 'Demonio' };
+            const fs = document.getElementById('role-fullscreen');
+            document.getElementById('fs-team').textContent = typeNames[type];
+            document.getElementById('fs-team').className = `fs-team ${type}`;
+            document.getElementById('fs-icon').textContent = role.icon || '🎭';
+            document.getElementById('fs-name').textContent = role.name;
+            document.getElementById('fs-ability').textContent = role.abilityFull || role.ability;
+            fs.classList.add('visible');
+        }
+
+        document.getElementById('fs-close').addEventListener('click', () => {
+            document.getElementById('role-fullscreen').classList.remove('visible');
+        });
+
+        document.getElementById('role-fullscreen').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('role-fullscreen')) {
+                document.getElementById('role-fullscreen').classList.remove('visible');
+            }
+        });
+
+        // Initial render
+        renderRoles();
+    </script>
+</body>
+</html>

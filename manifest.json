@@ -2,15 +2,18 @@
     "name": "BotC Narrator Helper",
     "short_name": "BotC",
     "description": "Asistente para el narrador de Blood on the Clocktower",
-    "start_url": "/botc-narrator/",
+    "start_url": ".",
+    "scope": ".",
     "display": "standalone",
+    "orientation": "portrait",
     "background_color": "#1a0a2e",
     "theme_color": "#1a0a2e",
     "icons": [
         {
             "src": "favicon.svg",
             "sizes": "any",
-            "type": "image/svg+xml"
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
         }
     ]
 }

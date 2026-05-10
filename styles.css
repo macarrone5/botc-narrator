@@ -27,14 +27,17 @@ html, body {
     background: var(--bg-primary);
     color: var(--text-primary);
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
 }
 
 #app {
     max-width: 600px;
     margin: 0 auto;
-    padding-bottom: 80px;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* Navigation */
@@ -48,6 +51,7 @@ html, body {
     border-top: 1px solid var(--accent);
     z-index: 1000;
     padding: 4px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
 }
 
 .nav-btn {
